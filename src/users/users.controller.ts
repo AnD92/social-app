@@ -8,21 +8,20 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Prisma, User } from '@prisma/client';
+import { Prisma} from '@prisma/client';
+import { SafeUserDto } from './dto/safe-user';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  create(@Body() createUserDto: Prisma.UserCreateInput) : Promise<User> {
+  create(@Body() createUserDto: Prisma.UserCreateInput): Promise<SafeUserDto> {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<SafeUserDto[]> {
     return this.usersService.findAll();
   }
 
@@ -32,7 +31,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(@Param('id') id: string, @Body() updateUserDto: SafeUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
 
