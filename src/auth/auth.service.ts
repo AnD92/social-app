@@ -13,7 +13,8 @@ export class AuthService {
         const user = await this.usersService.findByEmail(email);
         if (!user)
             throw new NotFoundException();
-        if (await bcrypt.compare(pass, user.password))
+        const isValid = await bcrypt.compare(pass, user.password)
+        if (!isValid)
             throw new UnauthorizedException();
         // TODO: Generate a JWT and return it here
         // instead of the user object

@@ -1,8 +1,8 @@
 
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Prisma } from '@prisma/client';
 import { SafeUserDto } from 'src/users/dto/safe-user';
+import { loginDto } from './dto/login';
 
 @Controller('auth')
 export class AuthController {
@@ -10,7 +10,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: Prisma.UserCreateInput) : Promise<SafeUserDto> {
+  signIn(@Body(new ValidationPipe()) signInDto: loginDto) : Promise<SafeUserDto> {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 }
