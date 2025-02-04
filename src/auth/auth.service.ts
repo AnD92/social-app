@@ -1,18 +1,23 @@
 
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
+import { SafeUserDto } from 'src/users/dto/safe-user';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class AuthService {
     constructor(private usersService: UsersService) { }
 
-    async signIn(email: string, pass: string): Promise<any> {
+    async signIn(email: string, pass: string): Promise<SafeUserDto> {
         const user = await this.usersService.findByEmail(email);
-        if (!user || await bcrypt.compare(pass, user.password))
+        if (!user)
+            throw new NotFoundException();
+        if (await bcrypt.compare(pass, user.password))
             throw new UnauthorizedException();
         // TODO: Generate a JWT and return it here
         // instead of the user object
-        return "ok";
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
     }
 }
