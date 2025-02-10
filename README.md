@@ -97,3 +97,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Moduli 
+
+I moduli che crei devono essere esportati e importati. Consideriamo il modulo Users ad esempio:
+Users importa il modulo DatabaseModule e quindi sarà possibile accedere a DatabaseService. Mentre in providers definisce i propri service. Se guardi anche UsersService, si utlizza JwtService che è il provider di JwtModule e non è stato importato. Questo perchè in AuthModule, JwtModule è stato importato come globale e in questo modo è fruibile in tutta l'applicazione senza un richiamo diretto nel module
