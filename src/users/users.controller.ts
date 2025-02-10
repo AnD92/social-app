@@ -13,6 +13,7 @@ import { Prisma} from '@prisma/client';
 import { SafeUserDto } from './dto/safe-user';
 import { Public } from './../auth/public.decorator';
 import { createUserDto } from './dto/create-user';
+import { JwtDto } from 'src/auth/dto/jwt';
 
 
 @Controller('users')
@@ -21,7 +22,7 @@ export class UsersController {
 
   @Public()
   @Post()
-  create(@Body(new ValidationPipe()) createUserDto: createUserDto): Promise<SafeUserDto> {
+  create(@Body(new ValidationPipe()) createUserDto: createUserDto): Promise<JwtDto> {
     return this.usersService.create(createUserDto);
   }
 

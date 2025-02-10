@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma} from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 import { SafeUserDto } from './dto/safe-user';
 import * as bcrypt from 'bcrypt';
+import { JwtDto } from 'src/auth/dto/jwt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: DatabaseService) { }
+  constructor(private readonly prisma: DatabaseService, private readonly jwtService: JwtService) { }
 
-  async create(createUserDto: Prisma.UserCreateInput): Promise<SafeUserDto> {
+  async create(createUserDto: Prisma.UserCreateInput): Promise<JwtDto> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const newUser = { ...createUserDto, password: hashedPassword };
-    return this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: newUser,
     });
+    const payload = { id: user.id, username: user.username, email: user.email };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
   findAll(): Promise<SafeUserDto[]> {
