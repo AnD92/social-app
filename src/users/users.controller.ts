@@ -9,11 +9,12 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Prisma} from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { SafeUserDto } from './dto/safe-user';
 import { Public } from './../auth/public.decorator';
 import { createUserDto } from './dto/create-user';
 import { JwtDto } from 'src/auth/dto/jwt';
+import { makeUserAdminDto } from './dto/update-user';
 
 
 @Controller('users')
@@ -32,6 +33,11 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Patch('makeAdmin')
+  makeAdmin(@Body(new ValidationPipe()) makeUserAdminDto: makeUserAdminDto): Promise<SafeUserDto> {
+    return this.usersService.makeAdmin({ ...makeUserAdminDto });
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
@@ -46,4 +52,5 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
+
 }

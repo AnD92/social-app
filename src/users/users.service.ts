@@ -5,6 +5,8 @@ import { SafeUserDto } from './dto/safe-user';
 import * as bcrypt from 'bcrypt';
 import { JwtDto } from 'src/auth/dto/jwt';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from './enums/role-user';
+import { makeUserAdminDto } from './dto/update-user';
 
 @Injectable()
 export class UsersService {
@@ -40,5 +42,13 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  makeAdmin({email} : makeUserAdminDto) : Promise<SafeUserDto> {
+    return this.prisma.user.update({
+      where: { email: email},
+      data: { role: Role.ADMIN },
+      omit: {password: true}
+    });
   }
 }
