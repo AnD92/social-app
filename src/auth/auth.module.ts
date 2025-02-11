@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { jwtConstants } from './costants';
 import { AuthGuard } from './auth.guards';
 import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './roles.guards';
 
 @Module({
   imports: [
@@ -21,6 +22,10 @@ import { APP_GUARD } from '@nestjs/core';
     {
       provide: APP_GUARD, //set as global guard for all endpoint
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD, //set as global guard for all endpoint
+      useClass: RolesGuard,
     }
   ],
 })
