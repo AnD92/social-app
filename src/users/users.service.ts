@@ -18,7 +18,7 @@ export class UsersService {
     const user = await this.prisma.user.create({
       data: newUser,
     });
-    const payload = { id: user.id, username: user.username, email: user.email };
+    const payload = { id: user.id, username: user.username, email: user.email, role: user.role};
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

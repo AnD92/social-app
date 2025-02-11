@@ -15,6 +15,8 @@ import { Public } from './../auth/public.decorator';
 import { createUserDto } from './dto/create-user';
 import { JwtDto } from 'src/auth/dto/jwt';
 import { makeUserAdminDto } from './dto/update-user';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from './enums/role-user';
 
 
 @Controller('users')
@@ -34,6 +36,7 @@ export class UsersController {
   }
 
   @Patch('makeAdmin')
+  @Roles(Role.ADMIN)
   makeAdmin(@Body(new ValidationPipe()) makeUserAdminDto: makeUserAdminDto): Promise<SafeUserDto> {
     return this.usersService.makeAdmin({ ...makeUserAdminDto });
   }
