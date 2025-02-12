@@ -8,6 +8,8 @@ import {
   Delete,
   ValidationPipe,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
@@ -19,6 +21,7 @@ import { makeUserAdminDto } from './dto/update-user';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from './enums/role-user';
 import { RolesGuard } from 'src/auth/roles.guards';
+import { UserEntity } from './entities/user.entity';
 
 
 @Controller('users')
@@ -43,8 +46,10 @@ export class UsersController {
     return this.usersService.makeAdmin({ ...makeUserAdminDto });
   }
 
+  @Public()
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string) : Promise<UserEntity> {
     return this.usersService.findOne(+id);
   }
 
