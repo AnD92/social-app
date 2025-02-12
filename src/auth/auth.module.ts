@@ -22,10 +22,6 @@ import { RolesGuard } from './roles.guards';
     {
       provide: APP_GUARD, //set as global guard for all endpoint
       useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD, //set as global guard for all endpoint
-      useClass: RolesGuard,
     }
   ],
 })
