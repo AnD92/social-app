@@ -102,3 +102,7 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 I moduli che crei devono essere esportati e importati. Consideriamo il modulo Users ad esempio:
 Users importa il modulo DatabaseModule e quindi sarà possibile accedere a DatabaseService. Mentre in providers definisce i propri service. Se guardi anche UsersService, si utlizza JwtService che è il provider di JwtModule e non è stato importato. Questo perchè in AuthModule, JwtModule è stato importato come globale e in questo modo è fruibile in tutta l'applicazione senza un richiamo diretto nel module
+
+## Guards
+
+attenzione, per ogni modulo può esistere solamente una guardia globale. Prendi ad esempio il modulo auth, avendo definito come guardia la verifica del token, la guardia per il controllo ruoli deve essere definita a livello locale. A meno che non si faccia un unico guard che inglobi i 2 rendelo globale
