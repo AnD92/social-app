@@ -10,14 +10,13 @@ import {
   UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Prisma } from '@prisma/client';
-import { SafeUserDto } from './dto/safe-user';
 import { Public } from './../auth/public.decorator';
 import { createUserDto } from './dto/create-user';
 import { JwtDto } from 'src/auth/dto/jwt';
-import { makeUserAdminDto } from './dto/update-user';
+import { MakeUserAdminDto, UpdateUserDto } from './dto/update-user';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from './enums/role-user';
 import { RolesGuard } from 'src/auth/roles.guards';
@@ -36,25 +35,32 @@ export class UsersController {
 
   @Public()
   @Get()
-  findAll(): Promise<SafeUserDto[]> {
-    return this.usersService.findAll();
+  async findAll(
+    @Query('limit') limit: number = 10,
+    @Query('offset') offset: number = 0,
+    @Query('searchTerm') searchTerm: string = '',
+    @Query('role') role: string = '',
+  ): Promise<UserEntity[]> {
+    return this.usersService.findAll(+limit, +offset, searchTerm, role);
   }
+
   @Roles(Role.ADMIN)
+  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(RolesGuard)
   @Patch('makeAdmin')
-  makeAdmin(@Body(new ValidationPipe()) makeUserAdminDto: makeUserAdminDto): Promise<SafeUserDto> {
+  makeAdmin(@Body(new ValidationPipe()) makeUserAdminDto: MakeUserAdminDto): Promise<UserEntity> {
     return this.usersService.makeAdmin({ ...makeUserAdminDto });
   }
 
   @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  findOne(@Param('id') id: string) : Promise<UserEntity> {
+  findOne(@Param('id') id: string): Promise<UserEntity> {
     return this.usersService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: SafeUserDto) {
+  update(@Param('id') id: string, @Body(new ValidationPipe()) updateUserDto: UpdateUserDto): Promise<UserEntity> {
     return this.usersService.update(+id, updateUserDto);
   }
 
